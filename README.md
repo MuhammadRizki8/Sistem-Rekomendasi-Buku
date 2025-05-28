@@ -1,5 +1,5 @@
 # Laporan Proyek Machine Learning - Muhammad Rizki
-
+# Dicoding - Machine Learning Terapan
 ## 📘 Project Overview
 ![image](https://github.com/user-attachments/assets/d3bfee7b-e05e-49ba-b032-a48e35d4f3ad)
 
@@ -358,8 +358,5 @@ Hasil evaluasi menunjukkan perbedaan karakteristik dan performa dari dua pendeka
 
 ---
 
-**---Ini adalah bagian akhir laporan---**
 
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+
