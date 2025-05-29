@@ -204,6 +204,48 @@ Pada tahap ini, sistem rekomendasi dibangun menggunakan dua pendekatan algoritma
 ### 1. Content-Based Filtering
 
 Pendekatan ini menggunakan informasi dari fitur konten buku (seperti judul, penulis, genre, dll) dan menghitung kemiripan antar buku menggunakan **Cosine Similarity** dari representasi TF-IDF.
+#### 🔍 Konsep Cosine Similarity dalam Pengembangan Model Rekomendasi
+
+#### 📌 Apa itu Cosine Similarity?
+
+Cosine Similarity adalah ukuran kesamaan antara dua vektor dalam ruang vektor berdasarkan sudut kosinus di antara keduanya. Nilainya berkisar dari -1 hingga 1, di mana:
+- 1 menunjukkan dua vektor sangat mirip (arah yang sama),
+- 0 menunjukkan tidak ada kesamaan (ortogonal),
+- -1 menunjukkan perbedaan total (arah berlawanan).
+
+Dalam konteks sistem rekomendasi, vektor ini merepresentasikan fitur dari item seperti kata-kata dalam deskripsi atau metadata buku, yang sebelumnya dikonversi ke dalam bentuk numerik menggunakan teknik seperti TF-IDF (Term Frequency-Inverse Document Frequency).
+
+
+#### ⚙️ Cara Kerja Cosine Similarity dalam Content-Based Filtering
+
+Content-Based Filtering merekomendasikan item yang mirip dengan item yang disukai pengguna sebelumnya berdasarkan atribut konten. Pendekatan ini menggunakan Cosine Similarity untuk menilai sejauh mana dua item memiliki kemiripan.
+
+Langkah-langkah umumnya meliputi:
+
+1. **Representasi Fitur**  
+   Setiap item (misalnya buku) direpresentasikan sebagai vektor berdasarkan fitur-fiturnya seperti deskripsi, genre, penulis, dan lain-lain.
+
+2. **Penghitungan Cosine Similarity**  
+   Menghitung kemiripan antar item dengan mengukur sudut antar vektor fitur. Semakin kecil sudutnya (semakin besar nilai cosine-nya), semakin mirip dua item tersebut.
+
+3. **Pembuatan Matriks Similarity**  
+   Semua item dibandingkan satu sama lain untuk menghasilkan matriks similarity yang digunakan untuk mengambil rekomendasi.
+
+4. **Pengambilan Rekomendasi**  
+   Ketika pengguna memilih sebuah item, sistem akan mencari item-item lain yang memiliki skor kemiripan tertinggi terhadap item tersebut.
+
+
+#### ✅ Justifikasi Penggunaan Cosine Similarity
+
+Penggunaan Cosine Similarity dalam model rekomendasi Content-Based Filtering tepat karena:
+
+- Mampu mengukur kesamaan semantik antar item meskipun tidak identik secara literal.
+- Tidak terpengaruh oleh panjang dokumen, sehingga cocok untuk membandingkan konten dengan panjang yang berbeda.
+- Efisien dalam membangun sistem rekomendasi berbasis konten yang skalabel dan mudah diinterpretasikan.
+- Mendukung diversifikasi hasil rekomendasi dengan tetap mempertahankan relevansi berdasarkan fitur konten.
+
+
+
 ```python
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 content_based_recommendations = get_content_based_recommendations("harry potter order phoenix harry potter")
@@ -228,6 +270,49 @@ Top-10 rekomendasi buku berdasarkan kemiripan konten dengan buku input.
 
 ### 2. Collaborative Filtering (SVD)
 Pendekatan ini merekomendasikan buku berdasarkan **pola rating pengguna** lain menggunakan **Singular Value Decomposition (SVD)**.
+#### 🤝 Collaborative Filtering dengan SVD (Singular Value Decomposition)
+
+#### 📌 Apa itu Collaborative Filtering?
+
+Collaborative Filtering adalah pendekatan sistem rekomendasi yang memprediksi preferensi pengguna berdasarkan kesamaan perilaku antar pengguna. Artinya, sistem merekomendasikan item kepada pengguna berdasarkan item yang disukai oleh pengguna lain dengan preferensi serupa, tanpa perlu melihat atribut kontennya.
+
+
+#### 🔢 Peran SVD dalam Collaborative Filtering
+
+SVD (Singular Value Decomposition) adalah teknik dekomposisi matriks yang digunakan untuk mereduksi dimensi dalam data rating pengguna, mempermudah pemodelan relasi laten antara pengguna dan item. Tujuannya adalah untuk:
+- Menyederhanakan data menjadi fitur laten yang mewakili karakteristik pengguna dan item.
+- Mengatasi masalah **sparsity** (banyak nilai kosong) pada matriks user-item.
+- Mengurangi noise dan meningkatkan generalisasi prediksi.
+
+#### ⚙️ Langkah-langkah Model SVD
+
+1. **Membangun Matriks User-Item**  
+   Matriks ini dibentuk dari data rating dengan baris sebagai pengguna dan kolom sebagai item (misalnya buku). Nilai yang kosong diisi dengan 0, lalu dirata-ratakan dan disentralisasi (dengan mengurangi rata-rata rating pengguna dari setiap nilai).
+
+2. **Sentralisasi Rating**  
+   Sebelum diterapkan SVD, rating setiap pengguna disentralisasi untuk menghilangkan bias individual. Ini membantu model fokus pada pola preferensi relatif.
+
+3. **Dekomposisi Matriks menggunakan TruncatedSVD**  
+   Menggunakan `TruncatedSVD` untuk mereduksi dimensi dari matriks sparse user-item, menghasilkan dua matriks:
+   - **User Factors**: representasi vektor preferensi tiap pengguna.
+   - **Item Factors**: representasi vektor fitur laten tiap item.
+
+4. **Prediksi Rating**  
+   Rating diprediksi dengan mengalikan vektor pengguna dan item dalam ruang fitur laten, lalu menambahkan kembali rata-rata rating pengguna sebagai koreksi.
+
+5. **Rekomendasi Item**  
+   Untuk setiap pengguna, sistem memprediksi rating untuk item yang belum mereka nilai. Item dengan prediksi tertinggi kemudian direkomendasikan, dengan penyesuaian untuk meningkatkan keanekaragaman (misalnya, membatasi jumlah buku dari penulis yang sama).
+
+#### ✅ Justifikasi Penggunaan SVD
+
+SVD sesuai untuk Collaborative Filtering karena:
+
+- **Efisien** dalam mereduksi dimensi dan menangani data rating yang jarang (sparse).
+- **Menangkap pola laten** antara pengguna dan item yang tidak langsung terlihat dari data mentah.
+- **Scalability**: dapat diimplementasikan pada dataset besar dengan waktu komputasi yang relatif cepat.
+- **Tidak memerlukan atribut konten**, sehingga cocok untuk situasi di mana informasi konten item tidak tersedia atau tidak konsisten.
+
+
 ```
 model_data = build_svd_model(train_df)
 recommendations_df, _ = get_improved_collaborative_recommendations(user_id=123, model_data=model_data, train_df=train_df, books_df=books_df)
@@ -286,17 +371,7 @@ $$
 MAE lebih mudah diinterpretasi karena berada dalam skala yang sama dengan data asli. Seperti RMSE, nilai MAE yang lebih rendah menunjukkan model yang lebih baik.
 
 ### 2. 📚 Content-Based Filtering Evaluation
-#### a. Cosine Similarity Score
-
-Metrik ini mengukur kesamaan antara item yang direkomendasikan dengan item referensi:
-
-$$
-\text{Cosine Similarity} = \frac{\vec{A} \cdot \vec{B}}{||\vec{A}|| \cdot ||\vec{B}||}
-$$
-
-Nilai berkisar dari 0 hingga 1, di mana nilai yang lebih tinggi menunjukkan kesamaan yang lebih besar.
-
-#### b. Coverage
+#### a. Coverage
 
 Coverage mengukur proporsi katalog yang dapat direkomendasikan oleh sistem:
 
@@ -306,7 +381,7 @@ $$
 
 Semakin tinggi nilai coverage, semakin banyak variasi item yang dapat dijangkau oleh sistem.
 
-#### c. Diversity
+#### b. Diversity
 
 Diversity mengukur keberagaman rekomendasi:
 
@@ -325,8 +400,7 @@ Semakin tinggi nilai diversity, semakin beragam rekomendasi yang diberikan siste
 |-------------------------|---------------------|-----------|
 | Collaborative Filtering | RMSE                | 0.5753    |
 |                         | MAE                 | 0.4631    |
-| Content-Based Filtering | Avg Cosine Similarity | 0.0132  |
-|                         | Coverage            | 0.0008    |
+| Content-Based Filtering | Coverage            | 0.0008    |
 |                         | Author Diversity    | 0.3333    |
 |                         | Genre Diversity     | 0.1111    |
 
@@ -341,9 +415,7 @@ Hasil evaluasi menunjukkan perbedaan karakteristik dan performa dari dua pendeka
 - Cocok digunakan ketika tersedia data interaksi pengguna yang cukup, seperti banyaknya rating yang telah diberikan.
 
 #### ⚠️ Content-Based Filtering
-- Menunjukkan **kesamaan antar item (cosine similarity)** yang rendah (**0.0132**) dan **coverage yang sangat terbatas** (**0.0008**), artinya hanya sebagian kecil buku yang berhasil direkomendasikan.
-- Hal ini bisa disebabkan oleh fitur konten yang terbatas atau kurang representatif, misalnya hanya berdasarkan judul atau deskripsi pendek.
-- Meskipun begitu, pendekatan ini memiliki **nilai keberagaman (diversity)** yang relatif baik:
+- Pendekatan ini memiliki **nilai keberagaman (diversity)** yang relatif baik:
   - **Author Diversity = 0.3333**
   - **Genre Diversity = 0.1111**
 - Artinya, ketika sistem berhasil memberikan rekomendasi, rekomendasi tersebut **tidak monoton dan cenderung beragam**.
