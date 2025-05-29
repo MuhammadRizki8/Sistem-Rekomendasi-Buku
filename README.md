@@ -59,7 +59,7 @@ Dengan kombinasi dua pendekatan ini, sistem diharapkan mampu memberikan rekomend
 
 ## 📊 Data Understanding
 
-Untuk proyek ini, saya menggunakan dataset **"Goodreads Books"** yang tersedia di [Kaggle](https://www.kaggle.com/datasets/zygmunt/goodbooks-10k). Dataset ini berisi informasi mengenai lebih dari 11.000 buku yang disertai dengan detail metadata dan rating dari pengguna di platform Goodreads.
+Untuk proyek ini, saya menggunakan dataset **"Goodreads Books"** yang tersedia di [Kaggle](https://www.kaggle.com/datasets/jealousleopard/goodreadsbooks). Dataset ini berisi informasi mengenai lebih dari 11.000 buku yang disertai dengan detail metadata dan rating dari pengguna di platform Goodreads.
 ```
 # Download dataset
 !kaggle datasets download -d jealousleopard/goodreadsbooks
